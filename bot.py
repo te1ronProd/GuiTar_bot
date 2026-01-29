@@ -1,6 +1,12 @@
 import json
 from datetime import date
 ADMIN_CHAT_ID = 1117990260
+
+# <<< ДОБАВЛЕНО >>>
+from flask import Flask
+import threading
+# <<< ДОБАВЛЕНО >>>
+
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
@@ -10,9 +16,23 @@ from telegram.ext import (
     filters
 )
 
+# <<< ДОБАВЛЕНО >>>
+# --- KEEP ALIVE ДЛЯ RENDER ---
+keep_alive_app = Flask("keep_alive")
+
+@keep_alive_app.route("/")
+def home():
+    return "Bot is alive"
+
+def run():
+    keep_alive_app.run(host="0.0.0.0", port=10000)
+
+def keep_alive():
+    t = threading.Thread(target=run)
+    t.start()
+# <<< ДОБАВЛЕНО >>>
+
 # --- СЛОВАРЬ ДЛЯ ХРАНЕНИЯ ДАННЫХ В ПАМЯТИ ---
-# Ключ: user_id
-# Значение: имя пользователя
 users = {}
 
 STATS_FILE = "stats.json"
@@ -26,7 +46,8 @@ def load_stats():
 def save_stats(stats):
     with open(STATS_FILE, "w") as f:
         json.dump(stats, f)
-# Храним состояние: записывается ли пользователь
+
+
 waiting_for_request = set()
 
 # --- ТЕКСТЫ БОТА ---
@@ -56,7 +77,6 @@ SKILLS_TEXT = (
     "• Автоматизация\n"
     "• Обучение Python (ОГЭ/ЕГЭ)\n"
     "• Помощь с проектами"
-    
 )
 
 CONTACT_TEXT = (
@@ -78,19 +98,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
     user_name = update.message.from_user.first_name
 
-    # Сохраняем пользователя
     users[user_id] = user_name
 
-    # Статистика
     stats = load_stats()
     today = str(date.today())
 
-    # Если новый день — обнуляем today_users
     if stats["last_date"] != today:
         stats["today_users"] = 0
         stats["last_date"] = today
 
-    # Если пользователь новый — увеличиваем счётчики
     if user_id not in stats["user_ids"]:
         stats["user_ids"].append(user_id)
         stats["total_users"] += 1
@@ -133,9 +149,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "📩 Связаться":
         await update.message.reply_text(CONTACT_TEXT)
+
     elif text == "📝 Записаться":
         waiting_for_request.add(user_id)
         await update.message.reply_text(REQUEST_TEXT)
+
     elif user_id in waiting_for_request:
         waiting_for_request.remove(user_id)
 
@@ -171,6 +189,7 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Всего пользователей: {stats['total_users']}"
     )
 
+
 async def stats_today(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.chat_id != ADMIN_CHAT_ID:
         return
@@ -181,7 +200,6 @@ async def stats_today(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "📈 Статистика за сегодня:\n"
         f"Новых пользователей: {stats['today_users']}"
     )
-
 
 # --- ЗАПУСК ---
 def main():
@@ -201,5 +219,7 @@ def main():
     print("Бот запущен...")
     app.run_polling()
 
+
 if __name__ == "__main__":
+    keep_alive()   # <<< ДОБАВЛЕНО
     main()
