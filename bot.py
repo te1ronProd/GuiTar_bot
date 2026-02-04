@@ -146,6 +146,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #Работа с видео
 async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
     video = update.message.video
+    print(update.message.video.file_id)
     print("VIDEO FILE ID:", video.file_id)
 
     await update.message.reply_text(
@@ -186,9 +187,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             video=VIDEO_FILE_ID,
             caption="🎸 Фингерстайл в моем исполнении\n\nЕсли хочешь так же — пиши, построим твой путь 🤙"
         )
-        #УДАЛИТЬ
-        print(update.message.video.file_id)
-
 
         username = update.message.from_user.username
         user_link = f"https://t.me/{username}" if username else "юзернейм не указан"
