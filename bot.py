@@ -1,7 +1,7 @@
 import json
 from datetime import date
 ADMIN_CHAT_ID = 1117990260
-VIDEO_FILE_ID = "PASTE_VIDEO_FILE_ID_HERE"
+VIDEO_FILE_ID = "BAACAgIAAxkBAAIBm2mDqBBNXYth0dHskg_0Ym1aa3MfAAJFqgACCkcYSG2ShLpGijpbOAQ"
 
 # <<< ДОБАВЛЕНО >>>
 from flask import Flask
