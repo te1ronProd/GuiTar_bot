@@ -143,6 +143,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
+#Работа с видео
+async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    video = update.message.video
+    print("VIDEO FILE ID:", video.file_id)
+
+    await update.message.reply_text(
+        "Видео получено ✅\nID выведен в консоль"
+    )
+
 # --- ОБРАБОТКА КНОПОК ---
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
@@ -236,6 +245,11 @@ def main():
     app.add_handler(CommandHandler("stats", stats))
     app.add_handler(CommandHandler("stats_today", stats_today))
     app.add_handler(CommandHandler("start", start))
+
+    # <<< ДОБАВЛЕНО: ловим видео и печатаем file_id >>>
+    app.add_handler(MessageHandler(filters.VIDEO, handle_video))
+
+    # <<< ТЕКСТ ОБРАБАТЫВАЕТСЯ ПОСЛЕ >>>
     app.add_handler(
         MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)
     )
