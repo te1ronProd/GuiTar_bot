@@ -154,6 +154,7 @@ async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 # --- ОБРАБОТКА КНОПОК ---
+# --- ОБРАБОТКА КНОПОК ---
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
     user_name = users.get(user_id, "друг")
@@ -178,15 +179,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         waiting_for_request.add(user_id)
         await update.message.reply_text(REQUEST_TEXT)
 
+    # ✅ ВОТ ТУТ ТЕПЕРЬ ОБРАБАТЫВАЕТСЯ ЗАЯВКА
     elif user_id in waiting_for_request:
         waiting_for_request.remove(user_id)
-    
-    elif text == "🎥 ВИДЕО МОЕЙ ИГРЫ 🔥":
-        await context.bot.send_video(
-            chat_id=update.message.chat_id,
-            video=VIDEO_FILE_ID,
-            caption="🎸 Фингерстайл в моем исполнении\n\nЕсли хочешь так же — пиши, построим твой путь 🤙"
-        )
 
         username = update.message.from_user.username
         user_link = f"https://t.me/{username}" if username else "юзернейм не указан"
@@ -203,6 +198,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text(
             "Спасибо! Я получил сообщение и скоро отвечу 👍"
+        )
+
+    elif text == "🎥 ВИДЕО МОЕЙ ИГРЫ 🔥":
+        await context.bot.send_video(
+            chat_id=update.message.chat_id,
+            video=VIDEO_FILE_ID,
+            caption="🎸 Фингерстайл в моем исполнении\n\nЕсли хочешь так же — пиши, построим твой путь 🤙"
         )
 
     else:
