@@ -130,9 +130,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         ["🧠 Обо мне", "🤔 Почему я?"],
         ["☝️ Первый урок", "💸 Цены"],
-        ["📩 Связаться"],
-        ["📝 Записаться"]
-    ]
+        ["📩 Связаться", "📝 Записаться"],
+        ["🎥 ВИДЕО МОЕЙ ИГРЫ 🔥"]
+]
 
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
@@ -169,6 +169,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif user_id in waiting_for_request:
         waiting_for_request.remove(user_id)
+    
+    elif text == "🎥 ВИДЕО МОЕЙ ИГРЫ 🔥":
+        await context.bot.send_video(
+            chat_id=update.message.chat_id,
+            video=VIDEO_FILE_ID,
+            caption="🎸 Фингерстайл в моем исполнении\n\nЕсли хочешь так же — пиши, построим твой путь 🤙"
+        )
+        #УДАЛИТЬ
+        print(update.message.video.file_id)
+
 
         username = update.message.from_user.username
         user_link = f"https://t.me/{username}" if username else "юзернейм не указан"
@@ -231,8 +241,10 @@ def main():
 
     print("Бот запущен...")
     app.run_polling()
+    
 
 
 if __name__ == "__main__":
     keep_alive()   # <<< ДОБАВЛЕНО
     main()
+    
