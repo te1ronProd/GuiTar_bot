@@ -100,12 +100,29 @@ CONTACT_TEXT = (
     "@te1ron"
 )
 PRICE_TEXT = (
-    "Цена:  1 урок = 800₽\n"
-    "Пакеты:\n1) 3 урока = 2200₽\n2) 5 уроков = 3600₽\n3) 10 уроков = 6900₽\n"
+    "Цена:  1 урок = 700₽\n"
+    "Пакеты:\n1) 3 урока = 1900₽\n2) 5 уроков = 3200₽\n3) 10 уроков = 6200₽\n"
     "Оплата ПОСЛЕ урока переводом\n"
     "\n"
     "Если есть вопросы, пиши в личку 👇"
 )
+
+
+MAIN_KEYBOARD = ReplyKeyboardMarkup(
+    [
+        ["🧠 Обо мне", "🤔 Почему я?"],
+        ["☝️ Первый урок", "💸 Цены"],
+        ["📩 Связаться", "📝 Записаться"],
+        ["🎥 ВИДЕО МОЕЙ ИГРЫ 🔥"]
+    ],
+    resize_keyboard=True
+)
+
+REQUEST_KEYBOARD = ReplyKeyboardMarkup(
+    [["❌ Отменить запись"]],
+    resize_keyboard=True
+)
+
 
 # --- /start ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -128,19 +145,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     save_stats(stats)
 
-    keyboard = [
-        ["🧠 Обо мне", "🤔 Почему я?"],
-        ["☝️ Первый урок", "💸 Цены"],
-        ["📩 Связаться", "📝 Записаться"],
-        ["🎥 ВИДЕО МОЕЙ ИГРЫ 🔥"]
-]
-
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-
     await update.message.reply_text(
         f"Привет, {user_name}! 👋\n\n"
         "Я бот Артема. Выбери, что тебе интересно:",
-        reply_markup=reply_markup
+        reply_markup=MAIN_KEYBOARD
     )
 
 #Работа с видео
@@ -154,32 +162,40 @@ async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 # --- ОБРАБОТКА КНОПОК ---
-# --- ОБРАБОТКА КНОПОК ---
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
     user_name = users.get(user_id, "друг")
     text = update.message.text
 
     if text == "🧠 Обо мне":
-        await update.message.reply_text(ABOUT_TEXT)
+        await update.message.reply_text(ABOUT_TEXT, reply_markup=MAIN_KEYBOARD)
 
     elif text == "🤔 Почему я?":
-        await update.message.reply_text(SKILLS_TEXT)
+        await update.message.reply_text(SKILLS_TEXT, reply_markup=MAIN_KEYBOARD)
 
     elif text == "💸 Цены":
-        await update.message.reply_text(PRICE_TEXT)
-    
+        await update.message.reply_text(PRICE_TEXT, reply_markup=MAIN_KEYBOARD)
+
     elif text == "☝️ Первый урок":
-        await update.message.reply_text(LESSON_TEXT)
+        await update.message.reply_text(LESSON_TEXT, reply_markup=MAIN_KEYBOARD)
 
     elif text == "📩 Связаться":
-        await update.message.reply_text(CONTACT_TEXT)
+        await update.message.reply_text(CONTACT_TEXT, reply_markup=MAIN_KEYBOARD)
 
     elif text == "📝 Записаться":
         waiting_for_request.add(user_id)
-        await update.message.reply_text(REQUEST_TEXT)
+        await update.message.reply_text(
+            REQUEST_TEXT + "\n\n❗ Напиши сообщение текстом 👇",
+            reply_markup=REQUEST_KEYBOARD
+        )
 
-    # ✅ ВОТ ТУТ ТЕПЕРЬ ОБРАБАТЫВАЕТСЯ ЗАЯВКА
+    elif text == "❌ Отменить запись":
+        waiting_for_request.discard(user_id)
+        await update.message.reply_text(
+            "Запись отменена 👌",
+            reply_markup=MAIN_KEYBOARD
+        )
+
     elif user_id in waiting_for_request:
         waiting_for_request.remove(user_id)
 
@@ -197,7 +213,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
         await update.message.reply_text(
-            "Спасибо! Я получил сообщение и скоро отвечу 👍"
+            "Спасибо! Я получил сообщение и скоро отвечу 👍",
+            reply_markup=MAIN_KEYBOARD
         )
 
     elif text == "🎥 ВИДЕО МОЕЙ ИГРЫ 🔥":
@@ -208,8 +225,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     else:
-        await update.message.reply_text("Выбери пункт из меню 👇")
-
+        await update.message.reply_text(
+            "Выбери пункт из меню 👇",
+            reply_markup=MAIN_KEYBOARD
+        )
 
 async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.chat_id != ADMIN_CHAT_ID:
