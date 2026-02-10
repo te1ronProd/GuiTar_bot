@@ -260,7 +260,14 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text("Фото получено ✅ ID в консоли")
 
-    
+# ловим фото от пользователя
+async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    photo = update.message.photo[-1]  # берём максимальное качество
+    print("📸 PHOTO FILE ID:", photo.file_id)  # вот здесь твой ID
+    await update.message.reply_text(
+        "Фото получено ✅\nID выведен в лог сервера"
+    )
+
 # --- ЗАПУСК ---
 def main():
     import os
@@ -269,7 +276,6 @@ def main():
 
     app = ApplicationBuilder().token(TOKEN).build()
 
-    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 
     app.add_handler(CommandHandler("stats", stats))
     app.add_handler(CommandHandler("stats_today", stats_today))
@@ -277,6 +283,9 @@ def main():
 
     # <<< ДОБАВЛЕНО: ловим видео и печатаем file_id >>>
     app.add_handler(MessageHandler(filters.VIDEO, handle_video))
+    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
+
+    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 
     # <<< ТЕКСТ ОБРАБАТЫВАЕТСЯ ПОСЛЕ >>>
     app.add_handler(
