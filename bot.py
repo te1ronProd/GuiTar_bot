@@ -253,6 +253,14 @@ async def stats_today(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Новых пользователей: {stats['today_users']}"
     )
 
+# --- ВРЕМЕННО: ловим фото и печатаем file_id ---
+async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    photo = update.message.photo[-1]  # самое качественное фото
+    print("PHOTO FILE ID:", photo.file_id)
+
+    await update.message.reply_text("Фото получено ✅ ID в консоли")
+
+    
 # --- ЗАПУСК ---
 def main():
     import os
@@ -260,6 +268,8 @@ def main():
     TOKEN = os.getenv("BOT_TOKEN")
 
     app = ApplicationBuilder().token(TOKEN).build()
+
+    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 
     app.add_handler(CommandHandler("stats", stats))
     app.add_handler(CommandHandler("stats_today", stats_today))
