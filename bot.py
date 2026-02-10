@@ -2,6 +2,7 @@ import json
 from datetime import date
 ADMIN_CHAT_ID = 1117990260
 VIDEO_FILE_ID = "BAACAgIAAxkBAAIBm2mDqBBNXYth0dHskg_0Ym1aa3MfAAJFqgACCkcYSG2ShLpGijpbOAQ"
+PHOTO_FILE_ID = "AgACAgIAAxkBAAIDdGmLlKOjrAWlnjQwuJiXdhzuoewJAAIJFGsb191RSJ7OpC9POgTJAQADAgADeQADOgQ"
 
 # <<< ДОБАВЛЕНО >>>
 from flask import Flask
@@ -168,7 +169,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
     if text == "🧠 Обо мне":
-        await update.message.reply_text(ABOUT_TEXT, reply_markup=MAIN_KEYBOARD)
+        await context.bot.send_photo(
+            chat_id=update.message.chat_id,
+            photo=PHOTO_FILE_ID,
+            caption=ABOUT_TEXT,
+            reply_markup=MAIN_KEYBOARD
+        )
 
     elif text == "🤔 Почему я?":
         await update.message.reply_text(SKILLS_TEXT, reply_markup=MAIN_KEYBOARD)
@@ -253,21 +259,6 @@ async def stats_today(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Новых пользователей: {stats['today_users']}"
     )
 
-# --- ВРЕМЕННО: ловим фото и печатаем file_id ---
-async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    photo = update.message.photo[-1]  # самое качественное фото
-    print("PHOTO FILE ID:", photo.file_id)
-
-    await update.message.reply_text("Фото получено ✅ ID в консоли")
-
-# ловим фото от пользователя
-async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    photo = update.message.photo[-1]  # берём максимальное качество
-    print("📸 PHOTO FILE ID:", photo.file_id)  # вот здесь твой ID
-    await update.message.reply_text(
-        "Фото получено ✅\nID выведен в лог сервера"
-    )
-
 # --- ЗАПУСК ---
 def main():
     import os
@@ -283,9 +274,6 @@ def main():
 
     # <<< ДОБАВЛЕНО: ловим видео и печатаем file_id >>>
     app.add_handler(MessageHandler(filters.VIDEO, handle_video))
-    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
-
-    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 
     # <<< ТЕКСТ ОБРАБАТЫВАЕТСЯ ПОСЛЕ >>>
     app.add_handler(
