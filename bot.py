@@ -167,6 +167,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
     user_name = users.get(user_id, "друг")
     text = update.message.text
+    print("НАЖАТ ТЕКСТ:", text)
 
     if text == "🧠 Обо мне":
         await context.bot.send_photo(
