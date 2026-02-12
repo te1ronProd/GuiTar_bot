@@ -152,6 +152,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=MAIN_KEYBOARD
     )
 
+
+    
+async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    photo = update.message.photo[-1]
+    file_id = photo.file_id
+
+    await update.message.reply_text(
+        f"Вот твой PHOTO_FILE_ID 👇\n\n{file_id}"
+    )
+
 #Работа с видео
 async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
     video = update.message.video
@@ -167,7 +177,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
     user_name = users.get(user_id, "друг")
     text = update.message.text
-    print("НАЖАТ ТЕКСТ:", text)
 
     if text == "🧠 Обо мне":
         await context.bot.send_photo(
@@ -275,7 +284,7 @@ def main():
 
     # <<< ДОБАВЛЕНО: ловим видео и печатаем file_id >>>
     app.add_handler(MessageHandler(filters.VIDEO, handle_video))
-
+    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     # <<< ТЕКСТ ОБРАБАТЫВАЕТСЯ ПОСЛЕ >>>
     app.add_handler(
         MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)
