@@ -1,3 +1,4 @@
+print("ФАЙЛ ЗАГРУЗИЛСЯ")
 import json
 from datetime import date
 ADMIN_CHAT_ID = 1117990260
