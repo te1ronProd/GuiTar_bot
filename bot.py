@@ -6,8 +6,8 @@ VIDEO_FILE_ID = "BAACAgIAAxkBAAMbaY300iGEexN9ogABj8VhGAKaZv5uAAJFqgACCkcYSAVCFXG
 PHOTO_FILE_ID = "AgACAgIAAxkBAAMnaY33kr8_oZ-aAvuUtepiv9WC7dsAAhwSaxuQ53BIr8TP8sZZrGUBAAMCAAN5AAM6BA"
 
 # <<< ДОБАВЛЕНО >>>
-from flask import Flask
-import threading
+#from flask import Flask
+#import threading
 # <<< ДОБАВЛЕНО >>>
 
 from telegram.constants import ParseMode
@@ -22,18 +22,18 @@ from telegram.ext import (
 
 # <<< ДОБАВЛЕНО >>>
 # --- KEEP ALIVE ДЛЯ RENDER ---
-keep_alive_app = Flask("keep_alive")
-
-@keep_alive_app.route("/")
-def home():
-    return "Bot is alive"
-
-def run():
-    keep_alive_app.run(host="0.0.0.0", port=10000)
-
-def keep_alive():
-    t = threading.Thread(target=run)
-    t.start()
+#keep_alive_app = Flask("keep_alive")
+#
+#@keep_alive_app.route("/")
+#def home():
+#    return "Bot is alive"
+#
+#def run():
+#    keep_alive_app.run(host="0.0.0.0", port=10000)
+#
+#def keep_alive():
+#    t = threading.Thread(target=run)
+#    t.start()
 # <<< ДОБАВЛЕНО >>>
 
 # --- СЛОВАРЬ ДЛЯ ХРАНЕНИЯ ДАННЫХ В ПАМЯТИ ---
@@ -295,12 +295,12 @@ def main():
         MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)
     )
 
-    print("БОТ 100% ЗАПУЩЕН И ЭТО НОВАЯ ВЕРСИЯ")
+    print("БОТ прям 100% ЗАПУЩЕН И ЭТО НОВАЯ ВЕРСИЯ")
     app.run_polling()
     
 
 
 if __name__ == "__main__":
-    keep_alive()   # <<< ДОБАВЛЕНО
+    #keep_alive()   # <<< ДОБАВЛЕНО
     main()
     
