@@ -274,6 +274,7 @@ async def stats_today(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # --- ЗАПУСК ---
 def main():
+    print("MAIN STARTED")
     import os
 
     TOKEN = os.getenv("BOT_TOKEN")
@@ -293,7 +294,7 @@ def main():
         MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)
     )
 
-    print("Бот запущен...")
+    print("БОТ 100% ЗАПУЩЕН И ЭТО НОВАЯ ВЕРСИЯ")
     app.run_polling()
     
 
