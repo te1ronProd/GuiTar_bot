@@ -6,8 +6,8 @@ VIDEO_FILE_ID = "BAACAgIAAxkBAAMbaY300iGEexN9ogABj8VhGAKaZv5uAAJFqgACCkcYSAVCFXG
 PHOTO_FILE_ID = "AgACAgIAAxkBAAMnaY33kr8_oZ-aAvuUtepiv9WC7dsAAhwSaxuQ53BIr8TP8sZZrGUBAAMCAAN5AAM6BA"
 
 # <<< ДОБАВЛЕНО >>>
-#from flask import Flask
-#import threading
+from flask import Flask
+import threading
 # <<< ДОБАВЛЕНО >>>
 
 from telegram import constants
@@ -24,18 +24,18 @@ from telegram.ext import (
 
 # <<< ДОБАВЛЕНО >>>
 # --- KEEP ALIVE ДЛЯ RENDER ---
-#keep_alive_app = Flask("keep_alive")
-#
-#@keep_alive_app.route("/")
-#def home():
-#    return "Bot is alive"
-#
-#def run():
-#    keep_alive_app.run(host="0.0.0.0", port=10000)
-#
-#def keep_alive():
-#    t = threading.Thread(target=run)
-#    t.start()
+keep_alive_app = Flask("keep_alive")
+
+@keep_alive_app.route("/")
+def home():
+    return "Bot is alive"
+
+def run():
+    keep_alive_app.run(host="0.0.0.0", port=10000)
+
+def keep_alive():
+    t = threading.Thread(target=run)
+    t.start()
 # <<< ДОБАВЛЕНО >>>
 
 # --- СЛОВАРЬ ДЛЯ ХРАНЕНИЯ ДАННЫХ В ПАМЯТИ ---
@@ -278,7 +278,11 @@ async def stats_today(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # --- ЗАПУСК ---
 def main():
     print("MAIN STARTED")
-    import os
+    import os  
+
+    def run():
+        port = int(os.environ.get("PORT", 10000))  # Render даёт порт через переменную PORT, иначе 10000
+        keep_alive_app.run(host="0.0.0.0", port=port)
 
     TOKEN = os.getenv("BOT_TOKEN")
 
@@ -304,6 +308,6 @@ def main():
 
 
 if __name__ == "__main__":
-    #keep_alive()   # <<< ДОБАВЛЕНО
+    keep_alive()   # <<< ДОБАВЛЕНО
     main()
     
