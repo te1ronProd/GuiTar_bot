@@ -9,6 +9,7 @@ from flask import Flask
 import threading
 # <<< ДОБАВЛЕНО >>>
 
+from telegram.constants import ParseMode
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
@@ -184,7 +185,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=update.message.chat_id,
             photo=PHOTO_FILE_ID,
             caption=ABOUT_TEXT,
-            reply_markup=MAIN_KEYBOARD
+            reply_markup=MAIN_KEYBOARD,
+            parse_mode=ParseMode.HTML
         )
 
     elif text == "🤔 Почему я?":
