@@ -10,6 +10,8 @@ PHOTO_FILE_ID = "AgACAgIAAxkBAAMnaY33kr8_oZ-aAvuUtepiv9WC7dsAAhwSaxuQ53BIr8TP8sZ
 #import threading
 # <<< ДОБАВЛЕНО >>>
 
+from telegram import constants
+from telegram.ext import Defaults
 from telegram.constants import ParseMode
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import (
@@ -280,7 +282,8 @@ def main():
 
     TOKEN = os.getenv("BOT_TOKEN")
 
-    app = ApplicationBuilder().token(TOKEN).parse_mode("HTML").build()
+    defaults = Defaults(parse_mode=constants.ParseMode.HTML)
+    app = ApplicationBuilder().token(TOKEN).defaults(defaults).build()
 
 
     app.add_handler(CommandHandler("stats", stats))
